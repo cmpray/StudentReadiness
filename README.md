@@ -1,5 +1,8 @@
 # StudentReadiness
 studentreadiness_withGUI_2.py
-Read student readiness survey data and generate results letters for each student.
-csv file will be chosen through interface.
-Will generate "Results" folder in the current working directory.
+
+Use the given csv file to run, chosen through interface.
+
+Reads student readiness survey data and generates results reports for each student.
+
+Program will generate "Results" folder in the current working directory.
