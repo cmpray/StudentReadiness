@@ -10,10 +10,9 @@ import csv
 import ResultsTexts
 import os
 import errno
+from tkinter import filedialog
 from tkinter import *
 from tkinter.filedialog import askopenfilename
-
-
 
 
 #-----------------------------------------------------------------------
@@ -31,42 +30,35 @@ def printInfo(case):
 
 
 #-----------------------------------------------------------------------
-#        FUNCTION TO GENERATE RESULT LETTER
+#        FUNCTION TO GENERATE RESULT REPORT
 #-----------------------------------------------------------------------
 
-# Note: a new folder called 'results' will be created within
-#       the current working directory. Each student's result
-#       letter will be created in this folder.
+# Note: a new folder called 'Results' will be created within
+#       the current working directory. Each student's results
+#       report will be created in this folder.
 
 
-def getResults(case):
+def getResults(case, BannerIDs, FirstNames, LastNames, Scores):
     ahRank  = Scores[case][0]
     pgRank  = Scores[case][1]
     acRank  = Scores[case][2]
     imRank  = Scores[case][3]
     csiRank = Scores[case][4]
 
+    # File name for report is the student's name
     name = str(LastNames[case]+FirstNames[case])
+    filename = "Results/" + name
 
-    thepath = "Results/"
-
-    filename = thepath+name
-
-
+    # Create Results folder within current directory
     cd = os.getcwd()
     fd = os.path.join(cd, r'Results')
     if not os.path.exists(fd):
         os.makedirs(fd)
-        
-
-
-    #-----------------------------------------------------------------------
-    #        OPEN FILE TO WRITE TO: SPECIFIC TO STUDENT
-    #-----------------------------------------------------------------------
-
-
+            
+    # Create file to write report to
     with open(filename, "w+") as f:
-
+        
+        # Write results into the report
         f.write(FirstNames[case]+"," + "\n")
         f.write(" \n")
         f.write(ResultsTexts.AcademicHabits.get(ahRank)+ "\n")
@@ -84,23 +76,21 @@ def getResults(case):
     f.close()
 
 
-
-
-
 #-----------------------------------------------------------------------
-#        MAKE THE USER INTERFACE
+#        MAKE THE USER INTERFACE AND READ DATA
 #-----------------------------------------------------------------------
 
 def clickedBtn():
-    fn = filedialog.askopenfilename() 
+    # Request file
+    fn = filedialog.askopenfilename(title = "Select file", filetypes = (("CSV files", "*.csv"), ("all files", ("*.*"))))                             
     print(fn)
     window.destroy()
-    messagebox.showinfo('Processing', 'Info Processing')
 
     if fn.lower().endswith('.csv'):
 
+        # Open the specified data set
         with open(fn) as csvfile:
-            next(csvfile)
+            next(csvfile)   # Skip the header row
             readCSV = csv.reader(csvfile, delimiter = ',')
 
             BannerIDs = []
@@ -109,6 +99,7 @@ def clickedBtn():
             FullNames = []
             Scores = []
 
+            # Intake data
             for row in readCSV:
                 bannerID = row[0]
                 firstname = row[1]
@@ -125,16 +116,16 @@ def clickedBtn():
                 FullNames.append(str(firstname + ' ' + lastname))
                 Scores.append([ah, pg, ac, im, csi])
 
+        # Generate individualized report
         for case in range(len(BannerIDs)):
-            getResults(case)
+            getResults(case, BannerIDs, FirstNames, LastNames, Scores)
+        print("Files Created.")
 
     else:
-        print("Sorry - you must choose a csv file.")
+        print("Please choose a csv file.")
 
-
-
-    
-    
+   
+# ---------------------------------------------------------
 
 window = Tk()
 window.title("Student Readiness Program")
